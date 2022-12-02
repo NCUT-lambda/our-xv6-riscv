@@ -1,0 +1,6 @@
+[book]
+authors = ["lihua"]
+language = "en"
+multilingual = false
+src = "src"
+title = "xv6-notes"
