@@ -1,0 +1,615 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>low level - xv6-notes</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../xv6-filesystem/Filesystem_Hierachy.html"><strong aria-hidden="true">1.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../xv6-filesystem/low_level.html" class="active"><strong aria-hidden="true">1.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="../xv6-filesystem/high_level.html"><strong aria-hidden="true">1.2.</strong> high level</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">xv6-notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="disk-磁盘"><a class="header" href="#disk-磁盘">disk (磁盘)</a></h2>
+<h3 id="布局"><a class="header" href="#布局">布局</a></h3>
+<p>**sector: **磁盘存取的最小单位。在xv6中为1kb</p>
+<p>**block: **文件系统存取的最小单位，为sector的任意整数倍。在xv6中为1kb</p>
+<p><img src="img.assets/disk_layout.png" alt="disk_layout" /></p>
+<ul>
+<li>boot block: 启动操作系统的代码</li>
+<li>super block: 描述文件系统信息</li>
+<li>log blocks: </li>
+<li>inode blocks: 存放所有inode</li>
+<li>bitmap block: 记录data block是否空闲</li>
+<li>data blocks: 存储文件和目录的内容</li>
+</ul>
+<h3 id="supber-block"><a class="header" href="#supber-block">supber block</a></h3>
+<pre><code class="language-c">// kernel/fs.h
+struct superblock {
+  uint magic;        // Must be FSMAGIC
+  uint size;         // Size of file system image (blocks)
+  uint nblocks;      // Number of data blocks
+  uint ninodes;      // Number of inodes.
+  uint nlog;         // Number of log blocks
+  uint logstart;     // Block number of first log block
+  uint inodestart;   // Block number of first inode block
+  uint bmapstart;    // Block number of first free map block
+};
+</code></pre>
+<pre><code class="language-c">#define FSSIZE       2000  // size of file system in blocks
+#define MAXOPBLOCKS  10  // max # of blocks any FS op writes
+#define LOGSIZE      (MAXOPBLOCKS*3)  // max data blocks in on-disk log
+#define NINODES 200
+</code></pre>
+<pre><code class="language-c">// kernel/fs.c
+// there should be one superblock per disk device, 
+// but we run with only one device
+struct superblock sb; 
+
+// Init fs
+void
+fsinit(int dev) {
+  readsb(dev, &amp;sb);
+  if(sb.magic != FSMAGIC)
+    panic(&quot;invalid file system&quot;);
+  initlog(dev, &amp;sb);
+}
+
+// Read the super block.
+static void
+readsb(int dev, struct superblock *sb)
+{
+  struct buf *bp;
+
+  bp = bread(dev, 1);
+  memmove(sb, bp-&gt;data, sizeof(*sb));
+  brelse(bp);
+}
+</code></pre>
+<h2 id="buffer-cache"><a class="header" href="#buffer-cache">buffer cache</a></h2>
+<h3 id="struct-buf"><a class="header" href="#struct-buf">struct buf</a></h3>
+<pre><code class="language-c">// kernel/buf.h
+struct buf {
+  int valid;   // has data been read from disk?
+  int disk;    // does disk &quot;own&quot; buf?
+  uint dev;
+  uint blockno;
+  struct sleeplock lock;
+  uint refcnt;      // 
+  struct buf *prev; // LRU cache list
+  struct buf *next;
+  uchar data[BSIZE];
+};
+</code></pre>
+<h3 id="bcache"><a class="header" href="#bcache">bcache</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+struct {
+  struct spinlock lock;
+  struct buf buf[NBUF];
+
+  // Linked list of all buffers, through prev/next.
+  // Sorted by how recently the buffer was used.
+  // head.next is most recent, head.prev is least.
+  // 双向循环链表
+  struct buf head;
+} bcache;
+</code></pre>
+<h3 id="bread"><a class="header" href="#bread">bread()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+struct buf*
+bread(uint dev, uint blockno)
+{
+  struct buf *b;
+
+  b = bget(dev, blockno);
+  if(!b-&gt;valid) {
+    virtio_disk_rw(b, 0);
+    b-&gt;valid = 1;
+  }
+  return b;
+}
+</code></pre>
+<h3 id="bget"><a class="header" href="#bget">bget()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+static struct buf*
+bget(uint dev, uint blockno)
+{
+  struct buf *b;
+
+  acquire(&amp;bcache.lock);
+
+  // Is the block already cached?
+  for(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next){
+    if(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno){
+      b-&gt;refcnt++;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+
+  // Not cached.
+  // Recycle the least recently used (LRU) unused buffer.
+  // 逆序遍历
+  for(b = bcache.head.prev; b != &amp;bcache.head; b = b-&gt;prev){
+    if(b-&gt;refcnt == 0) {
+      b-&gt;dev = dev;
+      b-&gt;blockno = blockno;
+      // 还未从磁盘读取数据
+      b-&gt;valid = 0;
+      b-&gt;refcnt = 1;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+  panic(&quot;bget: no buffers&quot;);
+}
+</code></pre>
+<h3 id="brelese"><a class="header" href="#brelese">brelese()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+void
+brelse(struct buf *b)
+{
+  if(!holdingsleep(&amp;b-&gt;lock))
+    panic(&quot;brelse&quot;);
+
+  releasesleep(&amp;b-&gt;lock);
+
+  acquire(&amp;bcache.lock);
+  b-&gt;refcnt--;
+  if (b-&gt;refcnt == 0) {
+    // no one is waiting for it.
+    // b移动到链表表头
+    b-&gt;next-&gt;prev = b-&gt;prev;
+    b-&gt;prev-&gt;next = b-&gt;next;
+    b-&gt;next = bcache.head.next;
+    b-&gt;prev = &amp;bcache.head;
+    bcache.head.next-&gt;prev = b;
+    bcache.head.next = b;
+  }
+  
+  release(&amp;bcache.lock);
+}
+</code></pre>
+<h2 id="logging"><a class="header" href="#logging">logging</a></h2>
+<h3 id="why"><a class="header" href="#why">why</a></h3>
+<ul>
+<li>
+<p>case 1</p>
+<pre><code class="language-c">// kernel/sysfile.c
+static struct inode*
+create(char *path, short type, short major, short minor)
+{
+...
+  if((ip = ialloc(dp-&gt;dev, type)) == 0){
+    iunlockput(dp);
+    return 0;
+  }
+  &lt;- crashed here, what will happen
+...
+}
+</code></pre>
+<p>crash会导致我们会丢失这个inode</p>
+</li>
+<li>
+<p>case 2</p>
+<p>在为文件分配block时</p>
+<ol>
+<li>从 data blocks 中找到一块空闲 block</li>
+<li>将该 block number 写入到文件的 inode 中</li>
+<li>在bitmap中标记该block已使用</li>
+</ol>
+<p>如果2，3之间 crash 会怎么样</p>
+<p>crash 可能会导致这个 block 被分配给多个文件</p>
+<p><strong>fatal !</strong></p>
+</li>
+</ul>
+<h3 id="what"><a class="header" href="#what">what</a></h3>
+<p>buffer cache 之上的一种机制，用来保证系统调用的原子性，同时能够在系统 crash 之后进行 Fast Recovery</p>
+<h3 id="how"><a class="header" href="#how">how</a></h3>
+<pre><code class="language-c">// kernel/log.c
+struct logheader {
+  int n;
+  int block[LOGSIZE];
+};
+
+struct log {
+  struct spinlock lock;
+  int start;       // start of log blocks
+  int size;         // number of log blocks
+  int outstanding; // how many FS sys calls are executing.
+  int committing;  // in commit(), please wait.
+  int dev;
+  struct logheader lh;
+};
+struct log log;
+</code></pre>
+<p><img src="img.assets/log_layout.png" alt="log_layout" /></p>
+<h3 id="log-实现"><a class="header" href="#log-实现">log 实现</a></h3>
+<ul>
+<li>
+<p>log write4</p>
+<p>当需要更新 inode block 或 bitmap block 或 data block 时，我们并不直接写入到磁盘对应的位置，而是记录一条 log 到磁盘的 log 分区</p>
+<pre><code class="language-c">// kernel/log.c
+void
+log_write(struct buf *b)
+{
+  int i;
+
+  acquire(&amp;log.lock);
+  if (log.lh.n &gt;= LOGSIZE || log.lh.n &gt;= log.size - 1)
+    panic(&quot;too big a transaction&quot;);
+  if (log.outstanding &lt; 1)
+    panic(&quot;log_write outside of trans&quot;);
+  // 要写入的 block number 已存在
+  for (i = 0; i &lt; log.lh.n; i++) {
+    if (log.lh.block[i] == b-&gt;blockno)   // log absorption
+      break;
+  }
+  log.lh.block[i] = b-&gt;blockno;
+  if (i == log.lh.n) {  // Add new block to log?
+    bpin(b);
+    log.lh.n++;
+  }
+  // i != log.lh.n
+  // log 已存在并且未 commit，nothing to do
+  release(&amp;log.lock);
+}
+</code></pre>
+</li>
+<li>
+<p>commit</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+commit()
+{
+  if (log.lh.n &gt; 0) {
+    write_log();     // Write modified blocks from cache to log
+    write_head();    // Write header to disk -- the real commit
+    install_trans(0); // Now install writes to home locations
+    log.lh.n = 0;
+    write_head();    // Erase the transaction from the log
+  }
+}
+</code></pre>
+<p>对单个 disk block 的读写具有原子性</p>
+<p>commit 可保证系统调用的原子性</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+write_log(void)
+{
+  int tail;
+
+  for (tail = 0; tail &lt; log.lh.n; tail++) {
+    struct buf *to = bread(log.dev, log.start+tail+1); // log block
+    struct buf *from = bread(log.dev, log.lh.block[tail]); // cache block
+    // 将 log 中记录的缓冲块号的缓冲块复制到 log 缓冲块
+    memmove(to-&gt;data, from-&gt;data, BSIZE);
+    // 将 log 缓冲块写出到磁盘
+    bwrite(to);  // write the log
+    brelse(from);
+    brelse(to);
+  }
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+static void
+write_head(void)
+{
+  struct buf *buf = bread(log.dev, log.start);
+  struct logheader *hb = (struct logheader *) (buf-&gt;data);
+  int i;
+  // 将内存中的 logheader 复制到 log head 的缓冲块
+  hb-&gt;n = log.lh.n;
+  for (i = 0; i &lt; log.lh.n; i++) {
+    hb-&gt;block[i] = log.lh.block[i];
+  }
+  // 将 log head 的缓冲块写出到磁盘
+  bwrite(buf);
+  brelse(buf);
+}
+</code></pre>
+</li>
+<li>
+<p>install trans</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+install_trans(int recovering)
+{
+  int tail;
+
+  for (tail = 0; tail &lt; log.lh.n; tail++) {
+    struct buf *lbuf = bread(log.dev, log.start+tail+1); // read log block
+    struct buf *dbuf = bread(log.dev, log.lh.block[tail]); // read dst
+    memmove(dbuf-&gt;data, lbuf-&gt;data, BSIZE);  // copy block to dst
+    bwrite(dbuf);  // write dst to disk
+    if(recovering == 0)
+      bunpin(dbuf);
+    brelse(lbuf);
+    brelse(dbuf);
+  }
+}
+</code></pre>
+</li>
+<li>
+<p>clean log</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+commit()
+{
+...
+  log.lh.n = 0;
+  write_head();    // Erase the transaction from the log
+}
+</code></pre>
+</li>
+<li>
+<p>recovery</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+recover_from_log(void)
+{
+  read_head();
+  install_trans(1); // if committed, copy from log to disk
+  log.lh.n = 0;
+  write_head(); // clear the log
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="usage"><a class="header" href="#usage">usage</a></h3>
+<pre><code class="language-c">uint64
+sys_open()
+{
+...
+  // 合法性检查
+  begin_op();
+  ...
+  log_write();
+  ...
+  log_write();
+  ...
+  end_op();
+...
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+void
+begin_op(void)
+{
+  acquire(&amp;log.lock);
+  while(1){
+    // 有系统调用正在 commit
+    if(log.committing){
+      sleep(&amp;log, &amp;log.lock);
+      // 可能超出 log 大小限制
+    } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS &gt; LOGSIZE){
+      // this op might exhaust log space; wait for commit.
+      sleep(&amp;log, &amp;log.lock);
+    } else {
+      log.outstanding += 1;
+      release(&amp;log.lock);
+      break;
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+void
+end_op(void)
+{
+  int do_commit = 0;
+
+  acquire(&amp;log.lock);
+  log.outstanding -= 1;
+  if(log.committing)
+    panic(&quot;log.committing&quot;);
+  // 所有系统调用都已经 end_op()
+  if(log.outstanding == 0){
+    do_commit = 1;
+    log.committing = 1;
+  } else {
+    // begin_op() may be waiting for log space,
+    // and decrementing log.outstanding has decreased
+    // the amount of reserved space.
+    wakeup(&amp;log);
+  }
+  release(&amp;log.lock);
+  
+  // if log.outstanding != 0
+  // noting to do
+
+  if(do_commit){
+    // call commit w/o holding locks, since not allowed
+    // to sleep with locks.
+    commit();
+    acquire(&amp;log.lock);
+    log.committing = 0;
+    wakeup(&amp;log);
+    release(&amp;log.lock);
+  }
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../xv6-filesystem/Filesystem_Hierachy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../xv6-filesystem/high_level.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../xv6-filesystem/Filesystem_Hierachy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../xv6-filesystem/high_level.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>high level - xv6-notes</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../xv6-filesystem/Filesystem_Hierachy.html"><strong aria-hidden="true">1.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../xv6-filesystem/low_level.html"><strong aria-hidden="true">1.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="../xv6-filesystem/high_level.html" class="active"><strong aria-hidden="true">1.2.</strong> high level</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">xv6-notes</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="一些结构"><a class="header" href="#一些结构">一些结构</a></h2>
+<pre><code class="language-c">// kernle/file.h
+// 文件控制块
+struct file {
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
+  int ref; // reference count
+  char readable;
+  char writable;
+  struct pipe *pipe; // FD_PIPE
+  struct inode *ip;  // FD_INODE and FD_DEVICE
+  uint off;          // FD_INODE
+  short major;       // FD_DEVICE
+};
+</code></pre>
+<pre><code class="language-c">// kernel/fs.h
+// 磁盘索引结点
+struct dinode {
+  short type;           // File type
+  short major;          // Major device number (T_DEVICE only)
+  short minor;          // Minor device number (T_DEVICE only)
+  short nlink;          // Number of links to inode in file system
+  uint size;            // Size of file (bytes)
+  uint addrs[NDIRECT+1];   // Data block addresses
+};
+#define NDIRECT 12
+</code></pre>
+<pre><code class="language-c">// kernel/file.h
+// 内存索引结点
+struct inode {
+  uint dev;           // Device number
+  uint inum;          // Inode number
+  int ref;            // Reference count
+  struct sleeplock lock; // protects everything below here
+  int valid;          // inode has been read from disk?
+
+  short type;         // copy of disk inode
+  short major;
+  short minor;
+  short nlink;
+  uint size;
+  uint addrs[NDIRECT+1];
+};
+</code></pre>
+<pre><code class="language-c">// kernel/fs.h
+// 目录项
+struct dirent {
+  ushort inum;
+  char name[DIRSIZ];
+};
+</code></pre>
+<h3 id="addition"><a class="header" href="#addition">addition</a></h3>
+<p><strong>Major number</strong> (主设备号)</p>
+<blockquote>
+<p>Traditionally, the major number identifies the driver associated with the device. A major number can also be shared by multiple device drivers.</p>
+</blockquote>
+<p><strong>Minor number</strong> (次设备号)</p>
+<blockquote>
+<p>The major number is to identify the corresponding driver. Many devices may use the same major number. So we need to assign the number to each device that is using the same major number.</p>
+</blockquote>
+<img src="img.assets/file_index.png" alt="file_index" style="zoom:50%;" />
+<h2 id="目录查询"><a class="header" href="#目录查询">目录查询</a></h2>
+<img src="img.assets/dir_walk.png" alt="dir_walk" style="zoom:50%;" />
+<pre><code class="language-c">// kernel/fs.c
+static struct inode*
+namex(char *path, int nameiparent, char *name)
+{
+  struct inode *ip, *next;
+
+  if(*path == '/')
+    ip = iget(ROOTDEV, ROOTINO);
+  else
+    ip = idup(myproc()-&gt;cwd);
+
+  while((path = skipelem(path, name)) != 0){
+    ilock(ip);
+    if(ip-&gt;type != T_DIR){
+      iunlockput(ip);
+      return 0;
+    }
+    if(nameiparent &amp;&amp; *path == '\0'){
+      // Stop one level early.
+      iunlock(ip);
+      return ip;
+    }
+    if((next = dirlookup(ip, name, 0)) == 0){
+      iunlockput(ip);
+      return 0;
+    }
+    iunlockput(ip);
+    ip = next;
+  }
+  if(nameiparent){
+    iput(ip);
+    return 0;
+  }
+  return ip;
+}
+</code></pre>
+<h2 id="open系统调用"><a class="header" href="#open系统调用">open系统调用</a></h2>
+<h3 id="open"><a class="header" href="#open">open()</a></h3>
+<pre><code class="language-c">void
+ls(char *path)
+{
+  char buf[512], *p;
+  int fd;
+
+  if((fd = open(path, 0)) &lt; 0){
+    fprintf(2, &quot;ls: cannot open %s\n&quot;, path);
+    return;
+  }
+  ...
+}
+</code></pre>
+<pre><code class="language-c">int open(const char* file, int omode);
+</code></pre>
+<ul>
+<li>
+<p>file: 文件名，相对路径和绝对路径</p>
+</li>
+<li>
+<p>omode: 打开方式</p>
+<div class="table-wrapper"><table><thead><tr><th>omode</th><th>value</th><th>描述</th></tr></thead><tbody>
+<tr><td>O_RDONLY</td><td>0</td><td>只读</td></tr>
+<tr><td>O_WRONLY</td><td>1&lt;&lt;0</td><td>只写</td></tr>
+<tr><td>O_RDWR</td><td>1&lt;&lt;1</td><td>读写</td></tr>
+<tr><td>O_CREATE</td><td>1&lt;&lt;9</td><td>新建</td></tr>
+<tr><td>O_TRUNC</td><td>1&lt;&lt;10</td><td>删除</td></tr>
+</tbody></table>
+</div></li>
+<li>
+<p>返回值: 一个整数表示文件描述符，打开失败返回-1</p>
+</li>
+</ul>
+<h3 id="sys_open"><a class="header" href="#sys_open">sys_open()</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+uint64
+sys_open(void)
+{
+  char path[MAXPATH];
+  int fd, omode;
+  struct file *f;
+  struct inode *ip;
+  int n;
+
+  // 取参数
+  argint(1, &amp;omode);
+  if((n = argstr(0, path, MAXPATH)) &lt; 0)
+    return -1;
+
+  // 表示开始一个事务
+  begin_op();
+
+  if(omode &amp; O_CREATE){
+    ip = create(path, T_FILE, 0, 0);
+    if(ip == 0){
+      end_op();
+      return -1;
+    }
+  } 
+  // 不需要新建
+  else {
+    // 获取目标文件的inode
+    if((ip = namei(path)) == 0){
+      end_op();
+      return -1;
+    }
+    ilock(ip);
+    // 目录只能以只读方式打开
+    if(ip-&gt;type == T_DIR &amp;&amp; omode != O_RDONLY){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+
+  // 设备文件
+  if(ip-&gt;type == T_DEVICE &amp;&amp; (ip-&gt;major &lt; 0 || ip-&gt;major &gt;= NDEV)){
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
+  // 分配文件控制块和文件描述符
+  if((f = filealloc()) == 0 || (fd = fdalloc(f)) &lt; 0){
+    if(f)
+      fileclose(f);
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
+  // 设备文件
+  if(ip-&gt;type == T_DEVICE){
+    f-&gt;type = FD_DEVICE;
+    f-&gt;major = ip-&gt;major;
+  } 
+  // 文件或目录
+  else {
+    f-&gt;type = FD_INODE;
+    f-&gt;off = 0;
+  }
+  f-&gt;ip = ip;
+  // 非只写
+  f-&gt;readable = !(omode &amp; O_WRONLY);
+  // 只写或可读可写
+  f-&gt;writable = (omode &amp; O_WRONLY) || (omode &amp; O_RDWR);
+  
+  // 删除文件
+  if((omode &amp; O_TRUNC) &amp;&amp; ip-&gt;type == T_FILE){
+    itrunc(ip);
+  }
+
+  iunlock(ip);
+  // 结束一个事务
+  end_op();
+  
+  // 返回文件描述符
+  return fd;
+}
+</code></pre>
+<h3 id="create"><a class="header" href="#create">create()</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+static struct inode*
+create(char *path, short type, short major, short minor)
+{
+  struct inode *ip, *dp;
+  char name[DIRSIZ];
+
+  // struct inode* nameiparent(char *path, char *name)
+  // 返回path的父目录的inode和目标文件的name
+  // e.g., path=&quot;/etc/apt/config&quot;
+  // dp = inode(&quot;/etc/apt/&quot;)
+  // name = &quot;config&quot;
+  if((dp = nameiparent(path, name)) == 0)
+    return 0;
+
+  ilock(dp);
+
+  // struct inode* dirlookup(struct inode *dp, char *name, uint *poff)
+  // 查询dp目录下name文件的inode
+  if((ip = dirlookup(dp, name, 0)) != 0){
+    iunlockput(dp);
+    ilock(ip);
+    if(type == T_FILE &amp;&amp; (ip-&gt;type == T_FILE || ip-&gt;type == T_DEVICE))
+      return ip;
+    iunlockput(ip);
+    return 0;
+  }
+
+  // 若文件不存在
+  // 分配inode
+  if((ip = ialloc(dp-&gt;dev, type)) == 0){
+    iunlockput(dp);
+    return 0;
+  }
+
+  // 设置inode
+  ilock(ip);
+  ip-&gt;major = major;
+  ip-&gt;minor = minor;
+  ip-&gt;nlink = 1;
+  // 将ip写入到磁盘
+  iupdate(ip);
+
+  // 目录文件
+  if(type == T_DIR){  // Create . and .. entries.
+    // No ip-&gt;nlink++ for &quot;.&quot;: avoid cyclic ref count.
+    if(dirlink(ip, &quot;.&quot;, ip-&gt;inum) &lt; 0 || dirlink(ip, &quot;..&quot;, dp-&gt;inum) &lt; 0)
+      goto fail;
+  }
+
+  // 添加目录项
+  if(dirlink(dp, name, ip-&gt;inum) &lt; 0)
+    goto fail;
+
+  if(type == T_DIR){
+    // now that success is guaranteed:
+    dp-&gt;nlink++;  // for &quot;..&quot;
+    iupdate(dp);
+  }
+
+  iunlockput(dp);
+
+  // 未释放ip的锁
+  return ip;
+
+ fail:
+  // something went wrong. de-allocate ip.
+  ip-&gt;nlink = 0;
+  iupdate(ip);
+  iunlockput(ip);
+  iunlockput(dp);
+  return 0;
+}
+</code></pre>
+<h3 id="file-descriptor-文件描述符"><a class="header" href="#file-descriptor-文件描述符">file descriptor (文件描述符)</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+static int
+fdalloc(struct file *f)
+{
+  int fd;
+  struct proc *p = myproc();
+
+  // NOFILE: 每个进程最多打开文件数
+  for(fd = 0; fd &lt; NOFILE; fd++){
+    if(p-&gt;ofile[fd] == 0){
+      p-&gt;ofile[fd] = f;
+      // 文件描述符即为下标
+      return fd;
+    }
+  }
+  return -1;
+}
+</code></pre>
+<pre><code class="language-c">struct proc {
+...
+  int pid;                     // Process ID
+  struct file *ofile[NOFILE];  // Open files
+  struct inode *cwd;           // Current directory
+...
+};
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../xv6-filesystem/low_level.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../xv6-filesystem/low_level.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>
