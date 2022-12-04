@@ -1,0 +1,1171 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title></title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="xv6/VM/index.html"><strong aria-hidden="true">1.</strong> 虚拟内存</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="xv6/VM/Address-Space.html"><strong aria-hidden="true">1.1.</strong> 地址空间</a></li></ol></li><li class="chapter-item expanded "><a href="xv6/Filesystem/Filesystem_Hierachy.html"><strong aria-hidden="true">2.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="xv6/Filesystem/low_level.html"><strong aria-hidden="true">2.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="xv6/Filesystem/high_level.html"><strong aria-hidden="true">2.2.</strong> high level</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="虚拟内存"><a class="header" href="#虚拟内存">虚拟内存</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="地址空间"><a class="header" href="#地址空间">地址空间</a></h1>
+<h2 id="页表介绍"><a class="header" href="#页表介绍">页表介绍</a></h2>
+<p>Xv6跑在 Sv39 RISC-V下，该模式下虚拟地址只用到低39位其中前27位作会被解释索引找到物理块号再加上后12位得到物理地址。</p>
+<p>（注：这27位会被分为单级和多机索引）</p>
+<p><img src="xv6/VM/img.assets/p1.png" alt="" /></p>
+<pre><code class="language-c++">#define PTE_V (1L &lt;&lt; 0) // valid
+#define PTE_R (1L &lt;&lt; 1)
+#define PTE_W (1L &lt;&lt; 2)
+#define PTE_X (1L &lt;&lt; 3)
+#define PTE_U (1L &lt;&lt; 4) // user can access
+
+</code></pre>
+<h2 id="内核空间"><a class="header" href="#内核空间">内核空间</a></h2>
+<p>Xv6会为每个进程维护一个页表，内核也有一个页表方便内核以可预测的速度访问物理空间和硬件资源。</p>
+<h2 id="相关的数据定义"><a class="header" href="#相关的数据定义">相关的数据定义</a></h2>
+<pre><code class="language-c++">//where in kernel/riscv.h
+#define PGSIZE 4096 // bytes per page
+#define PXMASK          0x1FF // 9 bits
+#define PGROUNDUP(sz)  (((sz)+PGSIZE-1) &amp; ~(PGSIZE-1))
+#define PGROUNDDOWN(a) (((a)) &amp; ~(PGSIZE-1))
+
+#define PXSHIFT(level)  (PGSHIFT+(9*(level)))
+#define PX(level, va) ((((uint64) (va)) &gt;&gt; PXSHIFT(level)) &amp; PXMASK)
+#define MAXVA (1L &lt;&lt; (9 + 9 + 9 + 12 - 1))
+#define PA2PTE(pa) ((((uint64)pa) &gt;&gt; 12) &lt;&lt; 10)
+
+#define PTE2PA(pte) (((pte) &gt;&gt; 10) &lt;&lt; 12)
+</code></pre>
+<h2 id="地址空间-1"><a class="header" href="#地址空间-1">地址空间</a></h2>
+<p>最重要的函数</p>
+<pre><code class="language-C++">//pagetable_t 指向根页表 kernel or process
+
+
+//找到相应的页表项，没有则分配
+// where in kernel/vm.c
+walk(pagetable_t pagetable, uint64 va, int alloc)
+{
+  if(va &gt;= MAXVA)
+    panic(&quot;walk&quot;);
+
+  for(int level = 2; level &gt; 0; level--) {
+    pte_t *pte = &amp;pagetable[PX(level, va)];
+    if(*pte &amp; PTE_V) {
+      pagetable = (pagetable_t)PTE2PA(*pte);
+    } else {
+      if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)
+        return 0;
+      memset(pagetable, 0, PGSIZE);
+      *pte = PA2PTE(pagetable) | PTE_V;
+    }
+  }
+  return &amp;pagetable[PX(0, va)];
+}
+
+
+kvminit为内核申请一页的空间，然后调用kvmmap，在即将装载的内核页表上建立一系列的直接映射，包括I/O设备、内核代码和数据、内核空闲内存段等。
+
+```c++
+kvminit(void)
+{
+  kernel_pagetable = kvmmake();
+}
+
+pagetable_t
+kvmmake(void)
+{
+  pagetable_t kpgtbl;
+
+  kpgtbl = (pagetable_t) kalloc();
+  memset(kpgtbl, 0, PGSIZE);
+
+  // uart registers
+  kvmmap(kpgtbl, UART0, UART0, PGSIZE, PTE_R | PTE_W);
+
+  // virtio mmio disk interface
+  kvmmap(kpgtbl, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
+
+  // PLIC
+  kvmmap(kpgtbl, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
+
+  // map kernel text executable and read-only.
+  kvmmap(kpgtbl, KERNBASE, KERNBASE, (uint64)etext-KERNBASE, PTE_R | PTE_X);
+
+  // map kernel data and the physical RAM we'll make use of.
+  kvmmap(kpgtbl, (uint64)etext, (uint64)etext, PHYSTOP-(uint64)etext, PTE_R | PTE_W);
+
+  // map the trampoline for trap entry/exit to
+  // the highest virtual address in the kernel.
+  kvmmap(kpgtbl, TRAMPOLINE, (uint64)trampoline, PGSIZE, PTE_R | PTE_X);
+
+  // allocate and map a kernel stack for each process.
+  proc_mapstacks(kpgtbl);
+  
+  return kpgtbl;
+}
+
+void
+kvmmap(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
+{
+  if(mappages(kpgtbl, va, sz, pa, perm) != 0)
+    panic(&quot;kvmmap&quot;);
+}
+</code></pre>
+<pre><code class="language-C++">//为页表建立映射项
+int
+mappages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
+{
+  uint64 a, last;
+  pte_t *pte;
+
+  if(size == 0)
+    panic(&quot;mappages: size&quot;);
+  
+  a = PGROUNDDOWN(va);
+  last = PGROUNDDOWN(va + size - 1);
+  for(;;){
+    if((pte = walk(pagetable, a, 1)) == 0)
+      return -1;
+    if(*pte &amp; PTE_V)
+      panic(&quot;mappages: remap&quot;);
+    *pte = PA2PTE(pa) | perm | PTE_V;
+    if(a == last)
+      break;
+    a += PGSIZE;
+    pa += PGSIZE;
+  }
+  return 0;
+}
+</code></pre>
+<p>在调用kvminit申请初始化空间过后，main调用kvminithart来装载内核页表的根页表地址到satp寄存器中</p>
+<pre><code class="language-c++">void
+kvminithart()
+{
+  // wait for any previous writes to the page table memory to finish.
+  sfence_vma();
+
+  w_satp(MAKE_SATP(kernel_pagetable));
+
+  // flush stale entries from the TLB.
+  sfence_vma();
+}
+
+</code></pre>
+<p>在内核空间下，main马上就调用procinit，为每个用户进程分配一个内核栈，该内核栈将被映射到内核虚拟地址空间的高地址部分，位于trampoline下方。生成虚拟地址的步长为2页，而且只处理低的那一页，这样高的一页就自动成了保护页（PTE_V无效）。更新了所有内核栈的PTE之后，最后调用kvminithart更新一次satp寄存器，分页硬件就能使用新的页表。</p>
+<pre><code class="language-c++">void
+procinit(void)
+{
+  struct proc *p;
+  initlock(&amp;pid_lock, &quot;nextpid&quot;);
+
+  // 开始时p=proc，即p的地址是proc数组的最开始位置
+  // 每次遍历p就指向下一个进程结构
+  for(p = proc; p &lt; &amp;proc[NPROC]; p++) {
+      initlock(&amp;p-&gt;lock, &quot;proc&quot;);
+      // Allocate a page for a kernel stack, for each process
+      // Map it high in memory at the va generated by KSTACK, followed by an invalid guard page.
+      char *pa = kalloc();
+      if(pa == 0)
+        panic(&quot;kalloc&quot;);
+      // 指针相减就是地址相减，获取当前进程p和proc数组最开始位置的偏移量
+      // 比如第一次，从p-proc=0开始，KSTACK生成虚拟地址: TRAMPOLINE - 2*PGSIZE
+      // 因此TRAMPOLINE的下面第一页是guard page，第二页是kstack，也就是va指向的位置
+      // 后面也以此类推，被跳过而未被处理的guard page，PTE_V是无效的
+      uint64 va = KSTACK((int) (p - proc));
+      // adds the mapping PTEs to the kernel page table
+      // 内核栈可读可写，但在用户态不可访问，也不能直接执行
+      kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
+      p-&gt;kstack = va;
+  }
+  // 将更新后的内核页表重新写入到satp中
+  kvminithart();
+}
+
+</code></pre>
+<h2 id="物理空间分配"><a class="header" href="#物理空间分配">物理空间分配</a></h2>
+<p>内核在运行时会分配和释放很多物理内存，xv6将一部分的物理内存，从kernel data结束开始，到PHYSTOP为止，这一部分称为free memory，用于运行时的内存分配。每次分配和回收都以页为单位，一页大小4KB，通过一个空闲物理帧链表free-list，将空闲的物理帧串起来保存。页表、用户内存、内核栈、管道缓冲区等操作系统组件需要内存时，内核就从free-list上摘下一页或者多页分配给它们；在回收已经分配出去的内存时，这些被回收的物理帧，内核将它们一页页地重新挂到free-list上。</p>
+<pre><code class="language-c++">struct run {
+  struct run *next;
+};
+
+struct {
+  struct spinlock lock;
+  struct run *freelist;
+} kmem;
+
+extern char end[]; // first address after kernel.
+                   // defined by kernel.ld.
+
+//initialize the allocator
+void
+kinit()
+{
+  // initializes the free list to hold every page between the end of the kernel and PHYSTOP
+  // xv6 assumes that the machine has 128MB of RAM
+  initlock(&amp;kmem.lock, &quot;kmem&quot;);
+  // kernel data之后到PHYSTOP之前都可以用于分配
+  // add memory to the free list via per-page calls to kfree
+  freerange(end, (void*)PHYSTOP);
+}
+
+void
+freerange(void *pa_start, void *pa_end)
+{
+  char *p;
+  p = (char*)PGROUNDUP((uint64)pa_start);
+  //kfree是头插法
+  for(; p + PGSIZE &lt;= (char*)pa_end; p += PGSIZE)
+    kfree(p);
+}
+
+void
+kfree(void *pa)
+{
+  struct run *r;
+
+  if(((uint64)pa % PGSIZE) != 0 || (char*)pa &lt; end || (uint64)pa &gt;= PHYSTOP)
+    panic(&quot;kfree&quot;);
+
+  // Fill with junk to catch dangling refs.
+  memset(pa, 1, PGSIZE);
+
+  // casts pa to a pointer to struct run, which records the old start of the free list in r-&gt;next,
+  // and sets the free list equal to r
+  r = (struct run*)pa;
+
+  acquire(&amp;kmem.lock);
+  r-&gt;next = kmem.freelist;
+  kmem.freelist = r;
+  release(&amp;kmem.lock);
+}
+
+void *
+kalloc(void)
+{
+  // removes and returns the first element in the free list.
+  // When a process asks xv6 for more user memory, xv6 first uses kalloc to allocate physical pages.
+  struct run *r;
+
+  acquire(&amp;kmem.lock);
+  r = kmem.freelist;
+  if(r)
+    kmem.freelist = r-&gt;next;
+  release(&amp;kmem.lock);
+
+  if(r)
+    memset((char*)r, 5, PGSIZE); // fill with junk
+  return (void*)r;
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><img src="xv6/Filesystem/img.assets/filesystem_hierachy.png" alt="filesystem_hierachy" style="zoom:50%;" />
+<ul>
+<li>物理磁盘，可持久化存储文件</li>
+<li>buffer cache，缓存了磁盘中的盘块，避免频繁读取磁盘</li>
+<li>logging，文件系统的持久性</li>
+<li>inode cache，缓存使用到的inode</li>
+<li>file，管理不同类型文件，文件描述符</li>
+<li>syscall，文件系统接口</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="disk-磁盘"><a class="header" href="#disk-磁盘">disk (磁盘)</a></h2>
+<h3 id="布局"><a class="header" href="#布局">布局</a></h3>
+<p>**sector: **磁盘存取的最小单位。在xv6中为1kb</p>
+<p>**block: **文件系统存取的最小单位，为sector的任意整数倍。在xv6中为1kb</p>
+<p><img src="xv6/Filesystem/img.assets/disk_layout.png" alt="disk_layout" /></p>
+<ul>
+<li>boot block: 启动操作系统的代码</li>
+<li>super block: 描述文件系统信息</li>
+<li>log blocks: </li>
+<li>inode blocks: 存放所有inode</li>
+<li>bitmap block: 记录data block是否空闲</li>
+<li>data blocks: 存储文件和目录的内容</li>
+</ul>
+<h3 id="supber-block"><a class="header" href="#supber-block">supber block</a></h3>
+<pre><code class="language-c">// kernel/fs.h
+struct superblock {
+  uint magic;        // Must be FSMAGIC
+  uint size;         // Size of file system image (blocks)
+  uint nblocks;      // Number of data blocks
+  uint ninodes;      // Number of inodes.
+  uint nlog;         // Number of log blocks
+  uint logstart;     // Block number of first log block
+  uint inodestart;   // Block number of first inode block
+  uint bmapstart;    // Block number of first free map block
+};
+</code></pre>
+<pre><code class="language-c">#define FSSIZE       2000  // size of file system in blocks
+#define MAXOPBLOCKS  10  // max # of blocks any FS op writes
+#define LOGSIZE      (MAXOPBLOCKS*3)  // max data blocks in on-disk log
+#define NINODES 200
+</code></pre>
+<pre><code class="language-c">// kernel/fs.c
+// there should be one superblock per disk device, 
+// but we run with only one device
+struct superblock sb; 
+
+// Init fs
+void
+fsinit(int dev) {
+  readsb(dev, &amp;sb);
+  if(sb.magic != FSMAGIC)
+    panic(&quot;invalid file system&quot;);
+  initlog(dev, &amp;sb);
+}
+
+// Read the super block.
+static void
+readsb(int dev, struct superblock *sb)
+{
+  struct buf *bp;
+
+  bp = bread(dev, 1);
+  memmove(sb, bp-&gt;data, sizeof(*sb));
+  brelse(bp);
+}
+</code></pre>
+<h2 id="buffer-cache"><a class="header" href="#buffer-cache">buffer cache</a></h2>
+<h3 id="struct-buf"><a class="header" href="#struct-buf">struct buf</a></h3>
+<pre><code class="language-c">// kernel/buf.h
+struct buf {
+  int valid;   // has data been read from disk?
+  int disk;    // does disk &quot;own&quot; buf?
+  uint dev;
+  uint blockno;
+  struct sleeplock lock;
+  uint refcnt;      // 
+  struct buf *prev; // LRU cache list
+  struct buf *next;
+  uchar data[BSIZE];
+};
+</code></pre>
+<h3 id="bcache"><a class="header" href="#bcache">bcache</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+struct {
+  struct spinlock lock;
+  struct buf buf[NBUF];
+
+  // Linked list of all buffers, through prev/next.
+  // Sorted by how recently the buffer was used.
+  // head.next is most recent, head.prev is least.
+  // 双向循环链表
+  struct buf head;
+} bcache;
+</code></pre>
+<h3 id="bread"><a class="header" href="#bread">bread()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+struct buf*
+bread(uint dev, uint blockno)
+{
+  struct buf *b;
+
+  b = bget(dev, blockno);
+  if(!b-&gt;valid) {
+    virtio_disk_rw(b, 0);
+    b-&gt;valid = 1;
+  }
+  return b;
+}
+</code></pre>
+<h3 id="bget"><a class="header" href="#bget">bget()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+static struct buf*
+bget(uint dev, uint blockno)
+{
+  struct buf *b;
+
+  acquire(&amp;bcache.lock);
+
+  // Is the block already cached?
+  for(b = bcache.head.next; b != &amp;bcache.head; b = b-&gt;next){
+    if(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno){
+      b-&gt;refcnt++;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+
+  // Not cached.
+  // Recycle the least recently used (LRU) unused buffer.
+  // 逆序遍历
+  for(b = bcache.head.prev; b != &amp;bcache.head; b = b-&gt;prev){
+    if(b-&gt;refcnt == 0) {
+      b-&gt;dev = dev;
+      b-&gt;blockno = blockno;
+      // 还未从磁盘读取数据
+      b-&gt;valid = 0;
+      b-&gt;refcnt = 1;
+      release(&amp;bcache.lock);
+      acquiresleep(&amp;b-&gt;lock);
+      return b;
+    }
+  }
+  panic(&quot;bget: no buffers&quot;);
+}
+</code></pre>
+<h3 id="brelese"><a class="header" href="#brelese">brelese()</a></h3>
+<pre><code class="language-c">// kernel/bio.c
+void
+brelse(struct buf *b)
+{
+  if(!holdingsleep(&amp;b-&gt;lock))
+    panic(&quot;brelse&quot;);
+
+  releasesleep(&amp;b-&gt;lock);
+
+  acquire(&amp;bcache.lock);
+  b-&gt;refcnt--;
+  if (b-&gt;refcnt == 0) {
+    // no one is waiting for it.
+    // b移动到链表表头
+    b-&gt;next-&gt;prev = b-&gt;prev;
+    b-&gt;prev-&gt;next = b-&gt;next;
+    b-&gt;next = bcache.head.next;
+    b-&gt;prev = &amp;bcache.head;
+    bcache.head.next-&gt;prev = b;
+    bcache.head.next = b;
+  }
+  
+  release(&amp;bcache.lock);
+}
+</code></pre>
+<h2 id="logging"><a class="header" href="#logging">logging</a></h2>
+<h3 id="why"><a class="header" href="#why">why</a></h3>
+<ul>
+<li>
+<p>case 1</p>
+<pre><code class="language-c">// kernel/sysfile.c
+static struct inode*
+create(char *path, short type, short major, short minor)
+{
+...
+  if((ip = ialloc(dp-&gt;dev, type)) == 0){
+    iunlockput(dp);
+    return 0;
+  }
+  &lt;- crashed here, what will happen
+...
+}
+</code></pre>
+<p>crash会导致我们会丢失这个inode</p>
+</li>
+<li>
+<p>case 2</p>
+<p>在为文件分配block时</p>
+<ol>
+<li>从 data blocks 中找到一块空闲 block</li>
+<li>将该 block number 写入到文件的 inode 中</li>
+<li>在bitmap中标记该block已使用</li>
+</ol>
+<p>如果2，3之间 crash 会怎么样</p>
+<p>crash 可能会导致这个 block 被分配给多个文件</p>
+<p><strong>fatal !</strong></p>
+</li>
+</ul>
+<h3 id="what"><a class="header" href="#what">what</a></h3>
+<p>buffer cache 之上的一种机制，用来保证系统调用的原子性，同时能够在系统 crash 之后进行 Fast Recovery</p>
+<h3 id="how"><a class="header" href="#how">how</a></h3>
+<pre><code class="language-c">// kernel/log.c
+struct logheader {
+  int n;
+  int block[LOGSIZE];
+};
+
+struct log {
+  struct spinlock lock;
+  int start;       // start of log blocks
+  int size;         // number of log blocks
+  int outstanding; // how many FS sys calls are executing.
+  int committing;  // in commit(), please wait.
+  int dev;
+  struct logheader lh;
+};
+struct log log;
+</code></pre>
+<p><img src="xv6/Filesystem/img.assets/log_layout.png" alt="log_layout" /></p>
+<h3 id="log-实现"><a class="header" href="#log-实现">log 实现</a></h3>
+<ul>
+<li>
+<p>log write4</p>
+<p>当需要更新 inode block 或 bitmap block 或 data block 时，我们并不直接写入到磁盘对应的位置，而是记录一条 log 到磁盘的 log 分区</p>
+<pre><code class="language-c">// kernel/log.c
+void
+log_write(struct buf *b)
+{
+  int i;
+
+  acquire(&amp;log.lock);
+  if (log.lh.n &gt;= LOGSIZE || log.lh.n &gt;= log.size - 1)
+    panic(&quot;too big a transaction&quot;);
+  if (log.outstanding &lt; 1)
+    panic(&quot;log_write outside of trans&quot;);
+  // 要写入的 block number 已存在
+  for (i = 0; i &lt; log.lh.n; i++) {
+    if (log.lh.block[i] == b-&gt;blockno)   // log absorption
+      break;
+  }
+  log.lh.block[i] = b-&gt;blockno;
+  if (i == log.lh.n) {  // Add new block to log?
+    bpin(b);
+    log.lh.n++;
+  }
+  // i != log.lh.n
+  // log 已存在并且未 commit，nothing to do
+  release(&amp;log.lock);
+}
+</code></pre>
+</li>
+<li>
+<p>commit</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+commit()
+{
+  if (log.lh.n &gt; 0) {
+    write_log();     // Write modified blocks from cache to log
+    write_head();    // Write header to disk -- the real commit
+    install_trans(0); // Now install writes to home locations
+    log.lh.n = 0;
+    write_head();    // Erase the transaction from the log
+  }
+}
+</code></pre>
+<p>对单个 disk block 的读写具有原子性</p>
+<p>commit 可保证系统调用的原子性</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+write_log(void)
+{
+  int tail;
+
+  for (tail = 0; tail &lt; log.lh.n; tail++) {
+    struct buf *to = bread(log.dev, log.start+tail+1); // log block
+    struct buf *from = bread(log.dev, log.lh.block[tail]); // cache block
+    // 将 log 中记录的缓冲块号的缓冲块复制到 log 缓冲块
+    memmove(to-&gt;data, from-&gt;data, BSIZE);
+    // 将 log 缓冲块写出到磁盘
+    bwrite(to);  // write the log
+    brelse(from);
+    brelse(to);
+  }
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+static void
+write_head(void)
+{
+  struct buf *buf = bread(log.dev, log.start);
+  struct logheader *hb = (struct logheader *) (buf-&gt;data);
+  int i;
+  // 将内存中的 logheader 复制到 log head 的缓冲块
+  hb-&gt;n = log.lh.n;
+  for (i = 0; i &lt; log.lh.n; i++) {
+    hb-&gt;block[i] = log.lh.block[i];
+  }
+  // 将 log head 的缓冲块写出到磁盘
+  bwrite(buf);
+  brelse(buf);
+}
+</code></pre>
+</li>
+<li>
+<p>install trans</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+install_trans(int recovering)
+{
+  int tail;
+
+  for (tail = 0; tail &lt; log.lh.n; tail++) {
+    struct buf *lbuf = bread(log.dev, log.start+tail+1); // read log block
+    struct buf *dbuf = bread(log.dev, log.lh.block[tail]); // read dst
+    memmove(dbuf-&gt;data, lbuf-&gt;data, BSIZE);  // copy block to dst
+    bwrite(dbuf);  // write dst to disk
+    if(recovering == 0)
+      bunpin(dbuf);
+    brelse(lbuf);
+    brelse(dbuf);
+  }
+}
+</code></pre>
+</li>
+<li>
+<p>clean log</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+commit()
+{
+...
+  log.lh.n = 0;
+  write_head();    // Erase the transaction from the log
+}
+</code></pre>
+</li>
+<li>
+<p>recovery</p>
+<pre><code class="language-c">// kernel/log.c
+static void
+recover_from_log(void)
+{
+  read_head();
+  install_trans(1); // if committed, copy from log to disk
+  log.lh.n = 0;
+  write_head(); // clear the log
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="usage"><a class="header" href="#usage">usage</a></h3>
+<pre><code class="language-c">uint64
+sys_open()
+{
+...
+  // 合法性检查
+  begin_op();
+  ...
+  log_write();
+  ...
+  log_write();
+  ...
+  end_op();
+...
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+void
+begin_op(void)
+{
+  acquire(&amp;log.lock);
+  while(1){
+    // 有系统调用正在 commit
+    if(log.committing){
+      sleep(&amp;log, &amp;log.lock);
+      // 可能超出 log 大小限制
+    } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS &gt; LOGSIZE){
+      // this op might exhaust log space; wait for commit.
+      sleep(&amp;log, &amp;log.lock);
+    } else {
+      log.outstanding += 1;
+      release(&amp;log.lock);
+      break;
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-c">// kernel/log.c
+void
+end_op(void)
+{
+  int do_commit = 0;
+
+  acquire(&amp;log.lock);
+  log.outstanding -= 1;
+  if(log.committing)
+    panic(&quot;log.committing&quot;);
+  // 所有系统调用都已经 end_op()
+  if(log.outstanding == 0){
+    do_commit = 1;
+    log.committing = 1;
+  } else {
+    // begin_op() may be waiting for log space,
+    // and decrementing log.outstanding has decreased
+    // the amount of reserved space.
+    wakeup(&amp;log);
+  }
+  release(&amp;log.lock);
+  
+  // if log.outstanding != 0
+  // noting to do
+
+  if(do_commit){
+    // call commit w/o holding locks, since not allowed
+    // to sleep with locks.
+    commit();
+    acquire(&amp;log.lock);
+    log.committing = 0;
+    wakeup(&amp;log);
+    release(&amp;log.lock);
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="一些结构"><a class="header" href="#一些结构">一些结构</a></h2>
+<pre><code class="language-c">// kernle/file.h
+// 文件控制块
+struct file {
+  enum { FD_NONE, FD_PIPE, FD_INODE, FD_DEVICE } type;
+  int ref; // reference count
+  char readable;
+  char writable;
+  struct pipe *pipe; // FD_PIPE
+  struct inode *ip;  // FD_INODE and FD_DEVICE
+  uint off;          // FD_INODE
+  short major;       // FD_DEVICE
+};
+</code></pre>
+<pre><code class="language-c">// kernel/fs.h
+// 磁盘索引结点
+struct dinode {
+  short type;           // File type
+  short major;          // Major device number (T_DEVICE only)
+  short minor;          // Minor device number (T_DEVICE only)
+  short nlink;          // Number of links to inode in file system
+  uint size;            // Size of file (bytes)
+  uint addrs[NDIRECT+1];   // Data block addresses
+};
+#define NDIRECT 12
+</code></pre>
+<pre><code class="language-c">// kernel/file.h
+// 内存索引结点
+struct inode {
+  uint dev;           // Device number
+  uint inum;          // Inode number
+  int ref;            // Reference count
+  struct sleeplock lock; // protects everything below here
+  int valid;          // inode has been read from disk?
+
+  short type;         // copy of disk inode
+  short major;
+  short minor;
+  short nlink;
+  uint size;
+  uint addrs[NDIRECT+1];
+};
+</code></pre>
+<pre><code class="language-c">// kernel/fs.h
+// 目录项
+struct dirent {
+  ushort inum;
+  char name[DIRSIZ];
+};
+</code></pre>
+<h3 id="addition"><a class="header" href="#addition">addition</a></h3>
+<p><strong>Major number</strong> (主设备号)</p>
+<blockquote>
+<p>Traditionally, the major number identifies the driver associated with the device. A major number can also be shared by multiple device drivers.</p>
+</blockquote>
+<p><strong>Minor number</strong> (次设备号)</p>
+<blockquote>
+<p>The major number is to identify the corresponding driver. Many devices may use the same major number. So we need to assign the number to each device that is using the same major number.</p>
+</blockquote>
+<img src="xv6/Filesystem/img.assets/file_index.png" alt="file_index" style="zoom:50%;" />
+<h2 id="目录查询"><a class="header" href="#目录查询">目录查询</a></h2>
+<img src="xv6/Filesystem/img.assets/dir_walk.png" alt="dir_walk" style="zoom:50%;" />
+<pre><code class="language-c">// kernel/fs.c
+static struct inode*
+namex(char *path, int nameiparent, char *name)
+{
+  struct inode *ip, *next;
+
+  if(*path == '/')
+    ip = iget(ROOTDEV, ROOTINO);
+  else
+    ip = idup(myproc()-&gt;cwd);
+
+  while((path = skipelem(path, name)) != 0){
+    ilock(ip);
+    if(ip-&gt;type != T_DIR){
+      iunlockput(ip);
+      return 0;
+    }
+    if(nameiparent &amp;&amp; *path == '\0'){
+      // Stop one level early.
+      iunlock(ip);
+      return ip;
+    }
+    if((next = dirlookup(ip, name, 0)) == 0){
+      iunlockput(ip);
+      return 0;
+    }
+    iunlockput(ip);
+    ip = next;
+  }
+  if(nameiparent){
+    iput(ip);
+    return 0;
+  }
+  return ip;
+}
+</code></pre>
+<h2 id="open系统调用"><a class="header" href="#open系统调用">open系统调用</a></h2>
+<h3 id="open"><a class="header" href="#open">open()</a></h3>
+<pre><code class="language-c">void
+ls(char *path)
+{
+  char buf[512], *p;
+  int fd;
+
+  if((fd = open(path, 0)) &lt; 0){
+    fprintf(2, &quot;ls: cannot open %s\n&quot;, path);
+    return;
+  }
+  ...
+}
+</code></pre>
+<pre><code class="language-c">int open(const char* file, int omode);
+</code></pre>
+<ul>
+<li>
+<p>file: 文件名，相对路径和绝对路径</p>
+</li>
+<li>
+<p>omode: 打开方式</p>
+<div class="table-wrapper"><table><thead><tr><th>omode</th><th>value</th><th>描述</th></tr></thead><tbody>
+<tr><td>O_RDONLY</td><td>0</td><td>只读</td></tr>
+<tr><td>O_WRONLY</td><td>1&lt;&lt;0</td><td>只写</td></tr>
+<tr><td>O_RDWR</td><td>1&lt;&lt;1</td><td>读写</td></tr>
+<tr><td>O_CREATE</td><td>1&lt;&lt;9</td><td>新建</td></tr>
+<tr><td>O_TRUNC</td><td>1&lt;&lt;10</td><td>删除</td></tr>
+</tbody></table>
+</div></li>
+<li>
+<p>返回值: 一个整数表示文件描述符，打开失败返回-1</p>
+</li>
+</ul>
+<h3 id="sys_open"><a class="header" href="#sys_open">sys_open()</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+uint64
+sys_open(void)
+{
+  char path[MAXPATH];
+  int fd, omode;
+  struct file *f;
+  struct inode *ip;
+  int n;
+
+  // 取参数
+  argint(1, &amp;omode);
+  if((n = argstr(0, path, MAXPATH)) &lt; 0)
+    return -1;
+
+  // 表示开始一个事务
+  begin_op();
+
+  if(omode &amp; O_CREATE){
+    ip = create(path, T_FILE, 0, 0);
+    if(ip == 0){
+      end_op();
+      return -1;
+    }
+  } 
+  // 不需要新建
+  else {
+    // 获取目标文件的inode
+    if((ip = namei(path)) == 0){
+      end_op();
+      return -1;
+    }
+    ilock(ip);
+    // 目录只能以只读方式打开
+    if(ip-&gt;type == T_DIR &amp;&amp; omode != O_RDONLY){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+  }
+
+  // 设备文件
+  if(ip-&gt;type == T_DEVICE &amp;&amp; (ip-&gt;major &lt; 0 || ip-&gt;major &gt;= NDEV)){
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
+  // 分配文件控制块和文件描述符
+  if((f = filealloc()) == 0 || (fd = fdalloc(f)) &lt; 0){
+    if(f)
+      fileclose(f);
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
+  // 设备文件
+  if(ip-&gt;type == T_DEVICE){
+    f-&gt;type = FD_DEVICE;
+    f-&gt;major = ip-&gt;major;
+  } 
+  // 文件或目录
+  else {
+    f-&gt;type = FD_INODE;
+    f-&gt;off = 0;
+  }
+  f-&gt;ip = ip;
+  // 非只写
+  f-&gt;readable = !(omode &amp; O_WRONLY);
+  // 只写或可读可写
+  f-&gt;writable = (omode &amp; O_WRONLY) || (omode &amp; O_RDWR);
+  
+  // 删除文件
+  if((omode &amp; O_TRUNC) &amp;&amp; ip-&gt;type == T_FILE){
+    itrunc(ip);
+  }
+
+  iunlock(ip);
+  // 结束一个事务
+  end_op();
+  
+  // 返回文件描述符
+  return fd;
+}
+</code></pre>
+<h3 id="create"><a class="header" href="#create">create()</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+static struct inode*
+create(char *path, short type, short major, short minor)
+{
+  struct inode *ip, *dp;
+  char name[DIRSIZ];
+
+  // struct inode* nameiparent(char *path, char *name)
+  // 返回path的父目录的inode和目标文件的name
+  // e.g., path=&quot;/etc/apt/config&quot;
+  // dp = inode(&quot;/etc/apt/&quot;)
+  // name = &quot;config&quot;
+  if((dp = nameiparent(path, name)) == 0)
+    return 0;
+
+  ilock(dp);
+
+  // struct inode* dirlookup(struct inode *dp, char *name, uint *poff)
+  // 查询dp目录下name文件的inode
+  if((ip = dirlookup(dp, name, 0)) != 0){
+    iunlockput(dp);
+    ilock(ip);
+    if(type == T_FILE &amp;&amp; (ip-&gt;type == T_FILE || ip-&gt;type == T_DEVICE))
+      return ip;
+    iunlockput(ip);
+    return 0;
+  }
+
+  // 若文件不存在
+  // 分配inode
+  if((ip = ialloc(dp-&gt;dev, type)) == 0){
+    iunlockput(dp);
+    return 0;
+  }
+
+  // 设置inode
+  ilock(ip);
+  ip-&gt;major = major;
+  ip-&gt;minor = minor;
+  ip-&gt;nlink = 1;
+  // 将ip写入到磁盘
+  iupdate(ip);
+
+  // 目录文件
+  if(type == T_DIR){  // Create . and .. entries.
+    // No ip-&gt;nlink++ for &quot;.&quot;: avoid cyclic ref count.
+    if(dirlink(ip, &quot;.&quot;, ip-&gt;inum) &lt; 0 || dirlink(ip, &quot;..&quot;, dp-&gt;inum) &lt; 0)
+      goto fail;
+  }
+
+  // 添加目录项
+  if(dirlink(dp, name, ip-&gt;inum) &lt; 0)
+    goto fail;
+
+  if(type == T_DIR){
+    // now that success is guaranteed:
+    dp-&gt;nlink++;  // for &quot;..&quot;
+    iupdate(dp);
+  }
+
+  iunlockput(dp);
+
+  // 未释放ip的锁
+  return ip;
+
+ fail:
+  // something went wrong. de-allocate ip.
+  ip-&gt;nlink = 0;
+  iupdate(ip);
+  iunlockput(ip);
+  iunlockput(dp);
+  return 0;
+}
+</code></pre>
+<h3 id="file-descriptor-文件描述符"><a class="header" href="#file-descriptor-文件描述符">file descriptor (文件描述符)</a></h3>
+<pre><code class="language-c">// kernel/sysfile.c
+static int
+fdalloc(struct file *f)
+{
+  int fd;
+  struct proc *p = myproc();
+
+  // NOFILE: 每个进程最多打开文件数
+  for(fd = 0; fd &lt; NOFILE; fd++){
+    if(p-&gt;ofile[fd] == 0){
+      p-&gt;ofile[fd] = f;
+      // 文件描述符即为下标
+      return fd;
+    }
+  }
+  return -1;
+}
+</code></pre>
+<pre><code class="language-c">struct proc {
+...
+  int pid;                     // Process ID
+  struct file *ofile[NOFILE];  // Open files
+  struct inode *cwd;           // Current directory
+...
+};
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>
