@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>文件系统</title>
+        <title>Trap</title>
         <!-- Custom HTML head -->
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,7 +74,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../../xv6/VM/index.html"><strong aria-hidden="true">1.</strong> 虚拟内存</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/VM/Address-Space.html"><strong aria-hidden="true">1.1.</strong> 地址空间</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/index.html"><strong aria-hidden="true">2.</strong> 系统调用</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Syscall/trap.html"><strong aria-hidden="true">2.1.</strong> Trap</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/user.html"><strong aria-hidden="true">2.2.</strong> User mode</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/syscall.html"><strong aria-hidden="true">2.3.</strong> System Call</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/kernel.html"><strong aria-hidden="true">2.4.</strong> Kernel</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/ref.html"><strong aria-hidden="true">2.5.</strong> Summary & Reference</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/Filesystem_Hierachy.html" class="active"><strong aria-hidden="true">3.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Filesystem/low_level.html"><strong aria-hidden="true">3.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/high_level.html"><strong aria-hidden="true">3.2.</strong> high level</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../xv6/VM/index.html"><strong aria-hidden="true">1.</strong> 虚拟内存</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/VM/Address-Space.html"><strong aria-hidden="true">1.1.</strong> 地址空间</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/index.html"><strong aria-hidden="true">2.</strong> 系统调用</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Syscall/trap.html" class="active"><strong aria-hidden="true">2.1.</strong> Trap</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/user.html"><strong aria-hidden="true">2.2.</strong> User mode</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/syscall.html"><strong aria-hidden="true">2.3.</strong> System Call</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/kernel.html"><strong aria-hidden="true">2.4.</strong> Kernel</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/ref.html"><strong aria-hidden="true">2.5.</strong> Summary & Reference</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/Filesystem_Hierachy.html"><strong aria-hidden="true">3.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Filesystem/low_level.html"><strong aria-hidden="true">3.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/high_level.html"><strong aria-hidden="true">3.2.</strong> high level</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -133,24 +133,96 @@
 
                 <div id="content" class="content">
                     <main>
-                        <img src="img.assets/filesystem_hierachy.png" alt="filesystem_hierachy" style="zoom:50%;" />
+                        <h3 id="1-trap"><a class="header" href="#1-trap">1. Trap</a></h3>
+<blockquote>
+<p>Kernel code (assembler or C) that processes a trap is often called a <em><strong>handler</strong></em>; the first handler instructions are usually written in assembler (trampoline.S, rather than C) and are called a <em><strong>vector</strong></em>.</p>
+</blockquote>
+<h4 id="popular-names"><a class="header" href="#popular-names">Popular names</a></h4>
 <ul>
-<li>物理磁盘，可持久化存储文件</li>
-<li>buffer cache，缓存了磁盘中的盘块，避免频繁读取磁盘</li>
-<li>logging，文件系统的持久性</li>
-<li>inode cache，缓存使用到的inode</li>
-<li>file，管理不同类型文件，文件描述符</li>
-<li>syscall，文件系统接口</li>
+<li>
+<p><strong>kernel mode</strong>: 内核态</p>
+</li>
+<li>
+<p><strong>user mode</strong>: 用户态</p>
+</li>
+<li>
+<p><strong>supervisor</strong>: 在内核态工作的具有较高权限的管理者身份</p>
+</li>
+<li>
+<p><strong>user</strong>: 与计算机进行<em><strong>交互</strong></em>的普通用户身份 🧑🏻‍💻 &lt;=&gt; 💻</p>
+</li>
+<li>
+<p><strong>stvec</strong>: The <em><strong>kernel</strong></em> writes the <u><em><strong>address</strong></em></u> of its trap handler here; the RISC-V jumps to the address in <em>stvec</em> to handle a trap. (指向了内核中处理 trap 的指令的起始地址)</p>
+</li>
+<li>
+<p><strong>sepc</strong>: When a trap occurs, RISC-V saves the <em><u><strong>program counter</strong></u></em> here (since the pc is then overwritten with the value in <em>stvec</em>).</p>
+</li>
+<li>
+<p><strong>sret</strong>: The sret (<em><u><strong>return</strong></u></em> from trap) instruction copies <em>sepc</em> to the pc. The <em><strong>kernel</strong></em> can write <em>sepc</em> to control where <em>sret</em> goes.</p>
+</li>
+<li>
+<p><strong>scause</strong>: RISC-V puts a number here that describes the <strong><u><em>reason</em></u></strong> for the trap. (<em><strong>exception</strong></em>, <em><strong>system call</strong></em>, <em><strong>device interrupt</strong></em>)</p>
+</li>
+<li>
+<p><strong>sscratch</strong>: (Supervisor mode scratch) Helps trap handler avoid over writing user registers before saving them. (🌟 OS 留了一个 reg 在自己手上, 对用户进程不可见.)</p>
+</li>
+<li>
+<p><strong>sstatus</strong>: The <em><strong>SIE</strong></em> bit in sstatus controls whether device interrupts are enabled. If the kernel clears SIE (<strong>0</strong>), the RISC-V will defer device interrupts until the kernel sets SIE (<strong>1</strong>). The <em><strong>SPP</strong></em> bit indicates whether a trap came from user mode (<strong>0</strong>) or supervisor mode (<strong>1</strong>), and controls to what mode <em>sret</em> returns.</p>
+<pre><code class="language-c">SSTATUS [SPP _ _ SPIE UPIE _ _ SIE UIE]
+          ^  ^ ^  ^    ^   ^ ^  ^   ^
+          8  7 6  5    4   3 2  1   0
+</code></pre>
+</li>
+<li>
+<p><strong>satp</strong>: (Supervisor mode address translation and protection) Tells trampoline the <em><strong><u>user/supervisor page table</u></strong></em> to switch to. (包含了指向 page table 的物理内存地址)</p>
+</li>
+<li>
+<p><strong>uservec</strong>: Saves <em><strong><u>user registers</u></strong></em> in the trapframe, an assembly function.</p>
+</li>
+<li>
+<p><strong>TRAPFRAME</strong> (<code>0x3fffffe000</code>, 保存进程寄存器现场的内存) and <strong>TRAMPOLINE</strong> (<code>$stvec = 0x3ffffff00</code>, Read-only, 跳板)</p>
+<p><img src="./img.assets/vaddr.png" alt="vaddr" /></p>
+</li>
+<li>
+<p><strong>memlayout.h</strong></p>
+<pre><code class="language-c">// User memory layout
+// Address zero first:
+//   text
+//   original data and bss
+//   fixed-size stack
+//   expandable heap
+//   ...
+//   TRAPFRAME (p-&gt;trapframe, used by the trampoline)
+//   TRAMPOLINE (the same page as in the `kernel`)
+
+// Map the trampoline page to the highest address,
+// in both user and kernel space.
+#define TRAMPOLINE (MAXVA - PGSIZE)
+
+// TRAPFRAME is the next page of TRAMPOLINE
+#define TRAPFRAME (TRAMPOLINE - PGSIZE)
+</code></pre>
+</li>
+<li>
+<p><strong>PTE_U</strong>: flag determines whether the user mode can use current page table. <em><strong>PTE_U = 0: Supervisor, 1: User</strong></em></p>
+</li>
+<li>
+<p><strong>proc.h</strong></p>
+<blockquote>
+<p><strong>struct trapframe &amp; 32 regs</strong></p>
+<p><strong>Good practice</strong></p>
+</blockquote>
+</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../xv6/Syscall/ref.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../xv6/Syscall/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="../../xv6/Filesystem/low_level.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../../xv6/Syscall/user.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -159,10 +231,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../xv6/Syscall/ref.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../xv6/Syscall/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="../../xv6/Filesystem/low_level.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../../xv6/Syscall/user.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
