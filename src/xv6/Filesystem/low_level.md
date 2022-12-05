@@ -2,9 +2,9 @@
 
 ### 布局
 
-**sector: **磁盘存取的最小单位。在xv6中为1kb
+**sector**: 磁盘存取的最小单位。在xv6中为1kb
 
-**block: **文件系统存取的最小单位，为sector的任意整数倍。在xv6中为1kb
+**block**: 文件系统存取的最小单位，为sector的任意整数倍。在xv6中为1kb
 
 ![disk_layout](img.assets/disk_layout.png)
 
