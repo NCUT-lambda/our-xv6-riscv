@@ -1,6 +1,6 @@
 # Summary
 
-- [Xv6 Guide](xv6/index.md)
+- [Xv6 Guide](index.md)
 
 - [虚拟内存](xv6/VM/index.md)
   - [地址空间](xv6/VM/Address-Space.md)
