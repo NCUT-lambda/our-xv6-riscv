@@ -1,0 +1,376 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>锁</title>
+        <!-- Custom HTML head -->
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../xv6/index.html"><strong aria-hidden="true">1.</strong> Xv6 Guide</a></li><li class="chapter-item expanded "><a href="../../xv6/VM/index.html"><strong aria-hidden="true">2.</strong> 虚拟内存</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/VM/Address-Space.html"><strong aria-hidden="true">2.1.</strong> 地址空间</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/index.html"><strong aria-hidden="true">3.</strong> 系统调用</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Syscall/isolation.html"><strong aria-hidden="true">3.1.</strong> Isolation</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/trap.html"><strong aria-hidden="true">3.2.</strong> Trap</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/user.html"><strong aria-hidden="true">3.3.</strong> User mode</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/syscall.html"><strong aria-hidden="true">3.4.</strong> System Call</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/kernel.html"><strong aria-hidden="true">3.5.</strong> Kernel</a></li><li class="chapter-item expanded "><a href="../../xv6/Syscall/ref.html"><strong aria-hidden="true">3.6.</strong> Summary & Reference</a></li></ol></li><li class="chapter-item expanded "><a href="../../xv6/Lock/index.html" class="active"><strong aria-hidden="true">4.</strong> 锁</a></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/Filesystem_Hierachy.html"><strong aria-hidden="true">5.</strong> 文件系统</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../xv6/Filesystem/low_level.html"><strong aria-hidden="true">5.1.</strong> low level</a></li><li class="chapter-item expanded "><a href="../../xv6/Filesystem/high_level.html"><strong aria-hidden="true">5.2.</strong> high level</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="锁与并发"><a class="header" href="#锁与并发">锁与并发</a></h1>
+<h2 id="为什么需要锁"><a class="header" href="#为什么需要锁">为什么需要锁</a></h2>
+<p>在操作系统内核中有大量的数据结构都是可以被并发访问的。并发地去访问同一片数据，可能会导致读写错误。
+要让这些并发不安全的操作被序列化，可以使用锁这种同步原语。</p>
+<pre><code class="language-c">// Allocate one 4096-byte page of physical memory.
+// Returns a pointer that the kernel can use.
+// Returns 0 if the memory cannot be allocated.
+void *
+kalloc(void)
+{
+  struct run *r;
+
+  acquire(&amp;kmem.lock);
+  r = kmem.freelist;
+  if(r)
+    kmem.freelist = r-&gt;next;
+  release(&amp;kmem.lock);
+
+  if(r)
+    memset((char*)r, 5, PGSIZE); // fill with junk
+  return (void*)r;
+}
+</code></pre>
+<p>在运行过程中，内核的内存分配器维护一个全局的链表 <code>freelist</code>。
+如果调用函数 <code>kalloc()</code> 成功，会从代表可用内存的链表中弹出一页内存。
+如果调用函数 <code>kfree()</code> 成功，会向代表可用内存的链表推入一页内存。</p>
+<p>在 xv6 中所使用的链表结构是线程不安全的，如果同时进行插入或弹出操作，可能会导致操作乱序。</p>
+<h2 id="在哪里使用了锁"><a class="header" href="#在哪里使用了锁">在哪里使用了锁</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>用到锁的文件</th><th>为什么需要锁</th></tr></thead><tbody>
+<tr><td>bcache.lock</td><td>保护块缓冲区缓存条目的分配</td></tr>
+<tr><td>cons.lock</td><td>序列化了对控制台硬件的访问，避免了混合的输出</td></tr>
+<tr><td>ftable.lock</td><td>序列化文件表中文件结构体的分配</td></tr>
+<tr><td>itable.lock</td><td>保护内存中 <code>inode</code> 的分配</td></tr>
+<tr><td>vdisk_lock</td><td>序列化对磁盘硬件和 DMA 描述符队列的访问</td></tr>
+<tr><td>kmem.lock</td><td>对内存的分配进行序列化</td></tr>
+<tr><td>log.lock</td><td>序列化对事务日志的操作</td></tr>
+<tr><td>pipe’s pi-&gt;lock</td><td>序列化对每个管道的操作</td></tr>
+<tr><td>pid_lock</td><td>序列化了 <code>next_pid</code> 的增量</td></tr>
+<tr><td>proc’s p-&gt;lock</td><td>序列化对进程状态的改变</td></tr>
+<tr><td>wait_lock</td><td>避免 <code>wait</code> 失去唤醒</td></tr>
+<tr><td>tickslock</td><td>序列化对 <code>ticks</code> 计数器的操作</td></tr>
+<tr><td>inode’s ip-&gt;lock</td><td>序列化对每个 <code>inode</code> 和其内容的操作</td></tr>
+<tr><td>buf’s b-&gt;lock</td><td>序列化对每个块缓冲区进行的操作</td></tr>
+</tbody></table>
+</div>
+<h2 id="锁的实现"><a class="header" href="#锁的实现">锁的实现</a></h2>
+<p>Xv6 中实现并使用了两种锁。</p>
+<h3 id="自旋锁"><a class="header" href="#自旋锁">自旋锁</a></h3>
+<p>在 <a href="https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/spinlock.h"><code>kernel/spinlock.h</code></a> 中定义了自旋锁的结构体。</p>
+<pre><code class="language-c">// Mutual exclusion lock.
+struct spinlock {
+  uint locked;       // Is the lock held?
+
+  // For debugging:
+  char *name;        // Name of lock.
+  struct cpu *cpu;   // The cpu holding the lock.
+};
+</code></pre>
+<p>自旋锁是对多处理器互斥的。也就是说，两个 CPU 不能同时对 <code>lk-&gt;locked</code> 进行修改，要达到这个目的，需要一些<strong>原子化</strong>的操作。
+我们所学习的 xv6 操作系统目标的 RISC-V 架构指令集提供了满足这个需求的原子化原语 <code>amoswap r, a</code>。
+函数 <code>__sync_lock_test_and_set</code> 便是基于这一指令定义的。
+在此基础上，一个上锁函数的定义思路就出现了：将封装好的设定 <code>lk-&gt;locked</code> 的操作放在条件循环中，当条件不满足时进行循环地自旋，
+以达到阻塞下一步操作的目的。</p>
+<pre><code class="language-c">// Acquire the lock.
+// Loops (spins) until the lock is acquired.
+void
+acquire(struct spinlock *lk)
+{
+  push_off(); // disable interrupts to avoid deadlock.
+  if(holding(lk))
+    panic(&quot;acquire&quot;);
+
+  // On RISC-V, sync_lock_test_and_set turns into an atomic swap:
+  //   a5 = 1
+  //   s1 = &amp;lk-&gt;locked
+  //   amoswap.w.aq a5, a5, (s1)
+  while(__sync_lock_test_and_set(&amp;lk-&gt;locked, 1) != 0)
+    ;
+
+  // Tell the C compiler and the processor to not move loads or stores
+  // past this point, to ensure that the critical section's memory
+  // references happen strictly after the lock is acquired.
+  // On RISC-V, this emits a fence instruction.
+  __sync_synchronize();
+
+  // Record info about lock acquisition for holding() and debugging.
+  lk-&gt;cpu = mycpu();
+}
+</code></pre>
+<p>注意到，上面锁的上锁操作定义中，除了调试信息之外还有一些额外的代码。</p>
+<ul>
+<li>条件检查 <code>if(holding(lk))</code> 获取锁的操作不应该在当前 CPU 已经持有锁的基础上发生。
+Xv6 的锁实现是不可重入的。可重入锁又被称为递归锁，意思是如果当前的线程已经持有了锁，
+这个线程还尝试再次上锁，内核是允许这种情况发生的，而不是像现在的实现一样 panic 掉。</li>
+<li>调用 <code>push_off</code> 函数（与 <code>pop_off</code> 配套）会追踪在当前 CPU 上嵌套调用多个锁的层数。当
+调用多层锁的层级被减低到 0 时，系统将会重新启动中断功能，反之启用。
+这是因为在 xv6 中，锁保护的对象，既可以被线程使用，也可以被中断处理所使用。
+在使用受保护的数据之前应该对其上锁，这是如果中断启用，可能会导致死锁。</li>
+<li>调用 <code>__sync_synchronize</code> 函数：现代的编译器会对指令进行重排和优化，也就是说，
+程序执行指令的方式和在文本中定义的顺序可能是不同或并行的；如果发生了寄存器缓存的情况，
+程序甚至可能不执行生成需要的 <code>load</code> 和 <code>store</code> 指令。如果在当前的操作中，指令有序和不被省略
+对程序的行为是关键的，可以使用函数 <code>__sync_synchronize</code> 来告诉编译器不要做这些优化。
+对需要保护的对象上锁是这一场景的典型例子。</li>
+</ul>
+<p>考虑到上面的要点和实现方式，实现解锁的过程也是类似的。</p>
+<pre><code class="language-c">// Release the lock.
+void
+release(struct spinlock *lk)
+{
+  if(!holding(lk))
+    panic(&quot;release&quot;);
+
+  lk-&gt;cpu = 0;
+
+  // Tell the C compiler and the CPU to not move loads or stores
+  // past this point, to ensure that all the stores in the critical
+  // section are visible to other CPUs before the lock is released,
+  // and that loads in the critical section occur strictly before
+  // the lock is released.
+  // On RISC-V, this emits a fence instruction.
+  __sync_synchronize();
+
+  // Release the lock, equivalent to lk-&gt;locked = 0.
+  // This code doesn't use a C assignment, since the C standard
+  // implies that an assignment might be implemented with
+  // multiple store instructions.
+  // On RISC-V, sync_lock_release turns into an atomic swap:
+  //   s1 = &amp;lk-&gt;locked
+  //   amoswap.w zero, zero, (s1)
+  __sync_lock_release(&amp;lk-&gt;locked);
+
+  pop_off();
+}
+</code></pre>
+<p>在 <a href="https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/spinlock.c"><code>kernel/spinlock.c</code></a> 中定义了自旋锁的初始化与基本操作，和上面提及的辅助函数。</p>
+<h3 id="睡眠锁"><a class="header" href="#睡眠锁">睡眠锁</a></h3>
+<p>自旋操作会让 CPU 处于忙于等待的状态，适合用于进行一些需要时间短，顺序关键的操作。
+如果符合以上要求的特性，这样的锁操作可以做到低延迟。此外，这里实现的自旋锁是和硬件相关的，最基础的高层同步原语。
+如果有的上锁操作需要执行相当一段时间，例如文件操作时，便需要一类锁能够不消耗太多系统资源，
+不让 CPU 忙于等待，让调度器知道当前任务在至少多少时间内无法推进。于是便引入了睡眠锁。</p>
+<p>在 <a href="https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/sleeplock.h"><code>kernel/sleeplock.h</code></a> 中定义了睡眠锁的数据结构。</p>
+<pre><code class="language-c">// Long-term locks for processes
+struct sleeplock {
+  uint locked;       // Is the lock held?
+  struct spinlock lk; // spinlock protecting this sleep lock
+
+  // For debugging:
+  char *name;        // Name of lock.
+  int pid;           // Process holding lock
+};
+</code></pre>
+<p>在睡眠锁的结构体中包含了自旋锁的字段，这是为了让对睡眠锁的操作序列化。</p>
+<p>在 <a href="https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/sleeplock.c"><code>kernel/sleeplock.c</code></a> 中定义的对睡眠锁的基本操作中，除了初始化函数外，
+都使用内部的自旋锁来保持序列化性质。</p>
+<pre><code class="language-c">
+void
+initsleeplock(struct sleeplock *lk, char *name)
+{
+  initlock(&amp;lk-&gt;lk, &quot;sleep lock&quot;);
+  lk-&gt;name = name;
+  lk-&gt;locked = 0;
+  lk-&gt;pid = 0;
+}
+
+void
+acquiresleep(struct sleeplock *lk)
+{
+  acquire(&amp;lk-&gt;lk);
+  while (lk-&gt;locked) {
+    sleep(lk, &amp;lk-&gt;lk);
+  }
+  lk-&gt;locked = 1;
+  lk-&gt;pid = myproc()-&gt;pid;
+  release(&amp;lk-&gt;lk);
+}
+
+void
+releasesleep(struct sleeplock *lk)
+{
+  acquire(&amp;lk-&gt;lk);
+  lk-&gt;locked = 0;
+  lk-&gt;pid = 0;
+  wakeup(lk);
+  release(&amp;lk-&gt;lk);
+}
+
+int
+holdingsleep(struct sleeplock *lk)
+{
+  int r;
+
+  acquire(&amp;lk-&gt;lk);
+  r = lk-&gt;locked &amp;&amp; (lk-&gt;pid == myproc()-&gt;pid);
+  release(&amp;lk-&gt;lk);
+  return r;
+}
+</code></pre>
+<p>睡眠锁所能进行的基本操作与自旋锁是类似的。
+在定义睡眠锁时，使用了 <code>sleep</code> 与 <code>wakeup</code> 这一对操作。
+操作 <code>sleep</code> 告诉内核，线程将会停止运行，直到等待到特定事件发生；
+操作 <code>wakeup</code> 告诉内核，事件发生，线程将会继续推进。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../xv6/Syscall/ref.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../../xv6/Filesystem/Filesystem_Hierachy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../xv6/Syscall/ref.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../xv6/Filesystem/Filesystem_Hierachy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
