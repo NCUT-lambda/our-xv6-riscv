@@ -11,6 +11,7 @@
   - [System Call](xv6/Syscall/syscall.md)
   - [Kernel](xv6/Syscall/kernel.md)
   - [Summary & Reference](xv6/Syscall/ref.md)
+- [锁](xv6/Lock/index.md)
 - [文件系统](xv6/Filesystem/Filesystem_Hierachy.md)
   - [low level](xv6/Filesystem/low_level.md)
   - [high level](xv6/Filesystem/high_level.md)
