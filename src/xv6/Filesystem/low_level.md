@@ -10,7 +10,7 @@
 
 - boot block: 启动操作系统的代码
 - super block: 描述文件系统信息
-- log blocks: 
+- log blocks: 日志信息
 - inode blocks: 存放所有inode
 - bitmap block: 记录data block是否空闲
 - data blocks: 存储文件和目录的内容
